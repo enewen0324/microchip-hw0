@@ -6,7 +6,7 @@ How to test
 3. select target position (In read, means read and store here. In write, means )
     - change mov 32H/36H,#XH; X form #00h to #FFH
 4. set default value in bit addressing memory
-    - change mov 20-23H,#XH; X form #00h to #1FH
+    - change mov 20-2FH,#XH; X form #00h to FFH
 5. select read or write
     - ACALL read/write
 
