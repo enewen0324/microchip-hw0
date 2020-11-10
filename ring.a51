@@ -3,13 +3,12 @@ start:
         MOV 30H,#01FH
         MOV 31H,#2H
         MOV 32H,#4H
-        // read the bit address 36H to 35h in ring
-        MOV 35H,#1H
+        MOV 35H,#13H
         MOV 36H,#10H
         MOV 22H,#01H
         MOV 40H,#08H
         MOV 41H,#08H
-        MOV 42H,#08H
+        MOV 42H,#80H
         MOV 43H,#08H
         MOV SP, #4FH
         ACALL reset
@@ -202,7 +201,8 @@ bit_write:
 WRITE_ZERO:
         MOV A,R7
         XRL A,#0FFH
-		MOV A,R1
+        MOV R7,A
+        MOV A,R1
         ADD A,38H
         MOV R1,A
         MOV A,@R1
@@ -210,8 +210,7 @@ WRITE_ZERO:
         MOV @R1,A
         AJMP WRITE_FI
 WRITE_ONE:
-        MOV A,R7
-		MOV A,R1
+	MOV A,R1
         ADD A,38H
         MOV R1,A
         MOV A,@R1
