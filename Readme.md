@@ -9,6 +9,7 @@ How to test
     - change mov 20-23H,#XH; X form #00h to #1FH
 5. select read or write
     - ACALL read/write
+
 | byte |  | 
 | -------- | -------- | 
 | 20 | 7 6 5 4 3 2 1 0 (target position) |
