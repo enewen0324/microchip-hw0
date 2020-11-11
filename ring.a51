@@ -1,18 +1,24 @@
 ORG 0
 start:  
-        MOV 30H,#01FH
-        MOV 31H,#2H
-        MOV 32H,#4H
+        MOV 30H,#00H
+        MOV 32H,#3H
+        MOV 31h,#00H
+        MOV 34H,#00H
         MOV 35H,#13H
-        MOV 36H,#10H
+        MOV 33h,#10h
         MOV 22H,#01H
-        MOV 40H,#08H
-        MOV 41H,#08H
-        MOV 42H,#80H
-        MOV 43H,#08H
+        MOV 70H,#78H
+        MOV 71H,#9AH
+        MOV 72H,#12H
+        MOV 73H,#34H
+        MOV 74h,#56H
         MOV SP, #4FH
         ACALL reset
-        ACALL write
+        MOV R3,31H
+        CJNE R3, #01H, CALL_R
+CALL_W: ACALL WRITE
+        LJMP endl
+CALL_R: ACALL read
         LJMP endl
 reset:  CLR A
         CLR c
@@ -27,9 +33,12 @@ reset:  CLR A
         RET
 
 read:   MOV R7,30H
-        MOV R6,31H
+        MOV R6,32H
+        MOV R5,#00H
+        ACALL new_cal
+        MOV R7,30H
         ACALL cal_index
-        MOV R7,32H
+        MOV R7,34H
         ACALL cal_index2
         MOV R7,37H
         ACALL bit_rotateR
@@ -38,12 +47,27 @@ read:   MOV R7,30H
         ACALL bit_rotateL
         RET
 
+new_cal:
+        MOV A,R6
+        CJNE A, 7, new_cal_NEED
+        AJMP new_cal_END
+new_cal_NEED:
+        DEC R6
+        CJNE R6, #0FFH, NO_NEED
+        MOV R6,#27H
+NO_NEED:
+        INC R5
+        AJMP new_cal
+new_cal_END:
+        MOV 37h,R5
+        RET
+
 cal_index:  
         // RESET
-        MOV A,R6
-        SUBB A, R7
-		ANL A,#01FH
-        MOV 37H,A
+        ; MOV A,R6
+        ; SUBB A, R7
+	; ANL A,#01FH
+        ; MOV 37H,A
         MOV A,R7
         MOV B,#08H
         DIV AB
@@ -89,8 +113,8 @@ bit_rotaterBACK:
 F_BYTE_RR: 
         PUSH 0
         PUSH 7
-        MOV R7,#04H
-        MOV R0,#43H
+        MOV R7,#05H
+        MOV R0,#74H
         CLR C
 F_BYTE_RR_IN:
         MOV A,@R0
@@ -101,8 +125,8 @@ F_BYTE_RR_IN:
         MOV A,#00H
         ADDC A, #00H
         RR A
-        ADD A,43H
-		MOV 43H,A
+        ADD A,74H
+		MOV 74H,A
         POP 7
         POP 0
         DJNZ R7,F_BYTE_RR
@@ -116,7 +140,7 @@ bit_read:
         MOV R7,39H
         MOV R6,38H
         MOV R0,3AH
-        MOV R1,#40h
+        MOV R1,#70h
         CLR C
 
         MOV A,R1
@@ -152,8 +176,8 @@ bit_rotateLBACK:
 F_BYTE_RL: 
         PUSH 0
         PUSH 7
-        MOV R7,#04H
-        MOV R0,#40H
+        MOV R7,#05H
+        MOV R0,#70H
         CLR C
 F_BYTE_RL_IN:
         MOV A,@R0
@@ -163,17 +187,19 @@ F_BYTE_RL_IN:
         DJNZ R7, F_BYTE_RL_IN
         MOV A,#00H
         ADDC A, #00H
-        ADD A,40H
-        MOV 40H,A
+        ADD A,70H
+        MOV 70H,A
         POP 7
         POP 0
         DJNZ R7,F_BYTE_RL
         AJMP bit_rotateLBACK
 
 write:  MOV R7,30H
-        MOV R6,35H
+        MOV R6,32H
+        ACALL new_cal
+        MOV R7,30H
         ACALL cal_index
-        MOV R7,36H
+        MOV R7,33H
         ACALL cal_index2
         MOV R7,37H
         ACALL bit_rotateR
@@ -191,7 +217,7 @@ bit_write:
         MOV R7,39H
         MOV R6,38H
         MOV R0,3AH
-        MOV R1,#40H
+        MOV R1,#70H
         CLR C
 
         MOV A,@R0
